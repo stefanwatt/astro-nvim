@@ -59,34 +59,38 @@ local config = {
     -- Add plugins, the packer syntax without the "use"
     init = {
       -- You can disable default plugins as follows:
-      ["goolord/alpha-nvim"] = { disable = true },
+      ["goolord/alpha-nvim"] = {
+        config = function ()
+          require'alpha'.setup(require'alpha.themes.startify'.config)
+        end
+      },
       ["nvim-neo-tree/neo-tree.nvim"] = { disable = true },
       -- You can also add new plugins here as well:
       { "shaunsingh/nord.nvim" },
       { "tpope/vim-surround" },
       { "easymotion/vim-easymotion" },
+      {"airblade/vim-rooter"},
       { "kyazdani42/nvim-tree.lua",
         config =function ()
-          require'nvim-tree'.setup {}
+          require'nvim-tree'.setup {
+            update_cwd = true,
+             update_to_buf_dir = {
+    enable = true,
+    auto_open = true,
+  },
+update_focused_file = {
+    enable = true,
+    update_cwd = true,
+    ignore_list = {},
+  },
+  git = {
+    enable = true,
+    ignore = true,
+    timeout = 500,
+  },
+          }
         end
       },
-      { "mhinz/vim-startify",
-        config=function ()
-          vim.cmd [[
-            let g:startify_custom_header =
-               \ startify#pad(split(system('figlet -w 100 AstroNvim'), '\n'))
-            let g:startify_lists = [
-              \ { 'type': 'files',     'header': ['   MRU']            },
-              \ { 'type': 'sessions',  'header': ['   Sessions']       },
-              \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
-              \ { 'type': 'commands',  'header': ['   Commands']       },
-              \ ]
-          ]]
-
-
-        end
-      },
-
       -- {
       --   "ray-x/lsp_signature.nvim",
       --   event = "BufRead",
