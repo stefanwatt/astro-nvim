@@ -6,7 +6,7 @@ local config = {
   -- set vim options here (vim.<first_key>.<second_key> =  value)
   options = {
     opt = {
-      relativenumber = true, -- sets vim.opt.relativenumber
+      relativenumber = false, -- sets vim.opt.relativenumber
     },
     g = {
       mapleader = " ", -- sets vim.g.mapleader
@@ -59,9 +59,40 @@ local config = {
     -- Add plugins, the packer syntax without the "use"
     init = {
       -- You can disable default plugins as follows:
+      { "ahmedkhalf/project.nvim",
+        config = function()
+          require("project_nvim").setup {}
+        end
+      },
+      [ "elianiva/telescope-npm.nvim" ]= {},
+
       ["goolord/alpha-nvim"] = {
         config = function ()
-          require'alpha'.setup(require'alpha.themes.startify'.config)
+          local alpha = require'alpha'
+          local startify = require'alpha.themes.startify'
+          local button = startify.button
+          local favorites = {
+              type = "group",
+              val = {
+                  button("i", "i3wm config", ":e ~/.config/i3/config<CR>"),
+                  button("n", "nvim config", ":e ~/.config/nvim/lua/user/init.lua<CR>"),
+                  button("p", "projects", ":Telescope projects<CR>"),
+              },
+          }
+          local section = startify.section
+          startify.config.layout = {
+ { type = "padding", val = 1 },
+        section.header,
+        { type = "padding", val = 2 },
+        section.top_buttons,
+        favorites,
+        { type = "padding", val = 1 },
+        section.mru,
+        { type = "padding", val = 1 },
+        section.bottom_buttons,
+        section.footer,
+          }
+          alpha.setup(startify.config)
         end
       },
       ["nvim-neo-tree/neo-tree.nvim"] = { disable = true },
@@ -73,6 +104,7 @@ local config = {
       { "kyazdani42/nvim-tree.lua",
         config =function ()
           require'nvim-tree'.setup {
+             respect_buf_cwd = true,
             update_cwd = true,
              update_to_buf_dir = {
     enable = true,
@@ -152,7 +184,11 @@ update_focused_file = {
         -- second key is the prefix, <leader> prefixes
         ["<leader>"] = {
           -- which-key registration table for normal mode, leader prefix
-          -- ["N"] = { "<cmd>tabnew<cr>", "New Buffer" },
+          ["T"] = {
+            name = "Telescope",
+            p = { ":Telescope projects<CR>", "Projects" },
+            n = { ":Telescope npm scripts<CR>", "npm" },
+          },
         },
       },
     },
